@@ -1,6 +1,12 @@
 .PHONY: all compile clean ct upgrade shell distclean
 
-REBAR=rebar3
+ifeq ($(wildcard rebar3),rebar3)
+REBAR = $(CURDIR)/rebar3
+endif
+ifeq ($(REBAR),)
+REBAR = $(CURDIR)/rebar3
+endif
+REBAR_URL = https://s3.amazonaws.com/rebar3/rebar3
 
 all: compile
 
@@ -37,3 +43,7 @@ docs:
 
 xref:
 	${REBAR} xref
+$(REBAR):
+	@curl -Lo rebar3 $(REBAR_URL) || wget $(REBAR_URL)
+	@chmod a+x rebar3
+	@$(CURDIR)/rebar3 update
